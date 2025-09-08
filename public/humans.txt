@@ -1,0 +1,21 @@
+/* TEAM */
+    Developer: iBrand Team
+    Contact: ibrandmarketingagency@gmail.com
+    From: New Damietta, Egypt
+
+/* SITE */
+    Last update: 2025/01/25
+    Language: English, Arabic
+    Doctype: HTML5
+    IDE: Visual Studio Code
+    Standards: HTML5, CSS3, JavaScript ES6+
+    Components: React, Next.js, TypeScript
+    Software: Node.js, npm
+
+
+
+
+
+
+
+

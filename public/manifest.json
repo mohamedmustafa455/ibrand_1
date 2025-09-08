@@ -1,0 +1,31 @@
+{
+  "name": "iBrand - Marketing Agency Egypt",
+  "short_name": "iBrand",
+  "description": "Leading marketing agency in Egypt offering digital marketing, branding, and creative solutions",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/globe.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "marketing", "advertising"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false
+}
+
+
+
+
+
+
+
+
