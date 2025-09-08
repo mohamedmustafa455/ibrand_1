@@ -201,7 +201,7 @@ ibrand-0/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/ibrand.git
+git clone https://github.com/Mohamed2007Sarhan/ibrand.git
 
 # 2. Navigate to project directory
 cd ibrand
@@ -486,5 +486,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 *© 2024 iBrand Marketing Agency. All rights reserved.*
+
 
 </div>
