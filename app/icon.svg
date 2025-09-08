@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="iBrand Icon">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="50%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes pulse {
+        0%,100% { opacity: 0.8; }
+        50% { opacity: 1; }
+      }
+      .ring { transform-origin: 64px 64px; animation: spin 8s linear infinite; }
+      .dot { animation: pulse 2.2s ease-in-out infinite; }
+    </style>
+  </defs>
+  <rect width="128" height="128" rx="24" fill="#0f172a"/>
+  <g filter="url(#glow)">
+    <circle class="ring" cx="64" cy="64" r="38" fill="none" stroke="url(#g)" stroke-width="8" stroke-linecap="round" stroke-dasharray="40 22 14 30"/>
+  </g>
+  <g>
+    <circle class="dot" cx="64" cy="34" r="4" fill="#93c5fd"/>
+    <circle class="dot" cx="94" cy="64" r="4" fill="#a78bfa" style="animation-delay:.3s"/>
+    <circle class="dot" cx="64" cy="94" r="4" fill="#67e8f9" style="animation-delay:.6s"/>
+    <circle class="dot" cx="34" cy="64" r="4" fill="#93c5fd" style="animation-delay:.9s"/>
+  </g>
+  <path d="M52 86V42h8v44h-8Zm24 0H68V42h8c8 0 14 6 14 14s-6 14-14 14h-4v16Z" fill="url(#g)"/>
+</svg>
+
+
+
+
+
+
+
