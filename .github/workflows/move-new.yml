@@ -1,0 +1,30 @@
+name: Move new folder into public
+
+on:
+  workflow_dispatch: # يشتغل يدوي بس
+
+jobs:
+  move-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Rename and move folder
+        run: |
+          if [ -d "new" ]; then
+            echo "✅ Found new/ folder, renaming and moving..."
+            mkdir -p public
+            mv new public/data_new
+          else
+            echo "⚠️ No new/ folder found!"
+          fi
+
+      - name: Commit & push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Move new folder into public/data_new"
+          git push
