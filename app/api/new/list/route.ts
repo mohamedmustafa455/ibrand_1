@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   if (segments.some((s) => s.includes(".."))) {
     return new NextResponse("Bad Request", { status: 400 })
   }
-  const base = path.join(process.cwd(), "new", ...segments)
+  const base = path.join(process.cwd(), "public", "data_new", ...segments)
   try {
     const st = fs.statSync(base)
     if (!st.isDirectory()) return NextResponse.json({ files: [] })
