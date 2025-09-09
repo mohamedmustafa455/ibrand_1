@@ -1,7 +1,10 @@
 name: Move new folder into public
 
 on:
-  workflow_dispatch: # يشتغل يدوي بس
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   move-and-commit:
