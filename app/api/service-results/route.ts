@@ -28,6 +28,21 @@ function isAudioFile(fileName: string): boolean {
   return AUDIO_EXTENSIONS.has(path.extname(fileName))
 }
 
+async function githubList(pathUnderNew: string): Promise<{ name: string; type: "file" | "dir" }[]> {
+  const apiUrl = `https://api.github.com/repos/Mohamed2007Sarhan/ibrand_data/contents/new/${encodeURI(pathUnderNew)}?ref=main`
+  try {
+    const res = await fetch(apiUrl, { headers: { "Accept": "application/vnd.github+json" }, cache: "no-store" })
+    if (!res.ok) return []
+    const data = await res.json() as any
+    if (!Array.isArray(data)) return []
+    return data
+      .filter((e: any) => e && (e.type === "file" || e.type === "dir") && typeof e.name === "string")
+      .map((e: any) => ({ name: e.name as string, type: e.type as "file" | "dir" }))
+  } catch {
+    return []
+  }
+}
+
 function safeReadDir(dirPath: string): string[] {
   try {
     return fs.readdirSync(dirPath)
@@ -49,17 +64,9 @@ const serviceToNewFolder: Record<ServiceId, string> = {
   "sponsored-ads": "sponsored-ads",     // use new folder structure for better organization
 }
 
-function listSubdirectories(dirPath: string): string[] {
-  try {
-    return fs
-      .readdirSync(dirPath)
-      .filter((entry) => {
-        const full = path.join(dirPath, entry)
-        try { return fs.statSync(full).isDirectory() } catch { return false }
-      })
-  } catch {
-    return []
-  }
+async function listSubdirectoriesGithub(pathUnderNew: string): Promise<string[]> {
+  const entries = await githubList(pathUnderNew)
+  return entries.filter((e) => e.type === "dir").map((e) => e.name)
 }
 
 export async function GET(request: Request) {
@@ -67,27 +74,27 @@ export async function GET(request: Request) {
   const service = (searchParams.get("service") || "").trim() as ServiceId
 
   // If service is content-writing or sponsored-ads, keep old behavior (no change)
-  // Otherwise, read from /new/<MappedService>/* where each subfolder is a section title
+  // Otherwise, read from GitHub repo new/<MappedService>/* where each subfolder is a section title
   const shouldUseNew = service && serviceToNewFolder[service] && serviceToNewFolder[service].length > 0
-
-  const newRoot = path.join(process.cwd(), "new")
-  const serviceRoot = shouldUseNew ? path.join(newRoot, serviceToNewFolder[service]) : null
+  const servicePathUnderNew = shouldUseNew ? serviceToNewFolder[service] : null
 
   type Section = { title: string; items: { src: string; filename: string }[] }
   const sectionsByTitle: Record<string, Section> = {}
 
-  if (shouldUseNew && serviceRoot) {
+  if (shouldUseNew && servicePathUnderNew) {
     // Include files directly under the service root as a generic section
-    const rootFiles = safeReadDir(serviceRoot).filter((f) => {
-      const full = path.join(serviceRoot, f)
-      try { if (!fs.statSync(full).isFile()) return false } catch { return false }
-      const isImg = isImageFile(f)
-      const isVid = isVideoFile(f)
-      const isAud = isAudioFile(f)
-      if (service === "video-editing" || service === "motion-graphics") return isVid || isImg
-      if (service === "voiceover") return isAud
-      return isImg
-    })
+    const rootEntries = await githubList(servicePathUnderNew)
+    const rootFiles = rootEntries
+      .filter((e) => e.type === "file")
+      .map((e) => e.name)
+      .filter((f) => {
+        const isImg = isImageFile(f)
+        const isVid = isVideoFile(f)
+        const isAud = isAudioFile(f)
+        if (service === "video-editing" || service === "motion-graphics") return isVid || isImg
+        if (service === "voiceover") return isAud
+        return isImg
+      })
     if (rootFiles.length) {
       // Group root files by their content/name patterns
       const groupedFiles: Record<string, string[]> = {}
@@ -120,17 +127,20 @@ export async function GET(request: Request) {
       }
     }
 
-    const sectionFolders = listSubdirectories(serviceRoot)
+    const sectionFolders = await listSubdirectoriesGithub(servicePathUnderNew)
     for (const section of sectionFolders) {
-      const absoluteSection = path.join(serviceRoot, section)
-      const files = safeReadDir(absoluteSection).filter((f) => {
-        const isImg = isImageFile(f)
-        const isVid = isVideoFile(f)
-        const isAud = isAudioFile(f)
-        if (service === "video-editing" || service === "motion-graphics") return isVid || isImg
-        if (service === "voiceover") return isAud
-        return isImg
-      })
+      const sectionEntries = await githubList(`${servicePathUnderNew}/${section}`)
+      const files = sectionEntries
+        .filter((e) => e.type === "file")
+        .map((e) => e.name)
+        .filter((f) => {
+          const isImg = isImageFile(f)
+          const isVid = isVideoFile(f)
+          const isAud = isAudioFile(f)
+          if (service === "video-editing" || service === "motion-graphics") return isVid || isImg
+          if (service === "voiceover") return isAud
+          return isImg
+        })
       if (files.length === 0) continue
       // For content-writing: merge all into one section named by the service
       const title = service === "content-writing" ? service : section
@@ -146,13 +156,13 @@ export async function GET(request: Request) {
   } else {
     // Fallback to legacy public/result structure
     const publicResultRoot = path.join(process.cwd(), "public", "result")
-    const topLevelFolders = safeReadDir(publicResultRoot).filter((name) => {
+    const topLevelFolders = safeReadDir(publicResultRoot).filter((name: string) => {
       const full = path.join(publicResultRoot, name)
       try { return fs.statSync(full).isDirectory() } catch { return false }
     })
     for (const folder of topLevelFolders) {
       const absoluteFolder = path.join(publicResultRoot, folder)
-      const files = safeReadDir(absoluteFolder).filter((f) => {
+      const files = safeReadDir(absoluteFolder).filter((f: string) => {
         const isImg = isImageFile(f)
         const isVid = isVideoFile(f)
         if (service === "video-editing" || service === "motion-graphics") return isVid || isImg
@@ -160,7 +170,7 @@ export async function GET(request: Request) {
       })
       if (files.length === 0) continue
       const title = folder
-      const items = files.map((file) => {
+      const items = files.map((file: string) => {
         const publicUrl = "/result/" + encodeURI(folder) + "/" + encodeURIComponent(file)
         return { src: publicUrl, filename: file }
       })

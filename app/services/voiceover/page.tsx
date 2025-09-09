@@ -115,7 +115,7 @@ export default function VoiceoverPage() {
         const listRes = await fetch(`/api/new/list?path=${encodeURIComponent("voiceover/voiceover")}`, { cache: "no-store" })
         const data = await listRes.json()
         const files: string[] = (data.files || []).filter((f: string) => /\.mp3$/i.test(f))
-        const urls = files.map((f) => `/api/new/voiceover/voiceover/${encodeURIComponent(f)}`)
+        const urls = files.map((f) => `/api/new/file?p=${encodeURIComponent("voiceover/voiceover/")}${encodeURIComponent(f)}`)
         setAudioFiles(urls)
       } catch {
         setAudioFiles([])
