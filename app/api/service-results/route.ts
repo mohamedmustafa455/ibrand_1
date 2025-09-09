@@ -70,7 +70,7 @@ export async function GET(request: Request) {
   // Otherwise, read from /new/<MappedService>/* where each subfolder is a section title
   const shouldUseNew = service && serviceToNewFolder[service] && serviceToNewFolder[service].length > 0
 
-  const newRoot = path.join(process.cwd(), "new")
+  const newRoot = path.join(process.cwd(), "public", "data_new")
   const serviceRoot = shouldUseNew ? path.join(newRoot, serviceToNewFolder[service]) : null
 
   type Section = { title: string; items: { src: string; filename: string }[] }
