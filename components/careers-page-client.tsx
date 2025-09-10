@@ -64,7 +64,7 @@ export default function CareersPageClient() {
     setIsSubmitting(true)
     
     try {
-      const response = await fetch("https://formspree.io/f/mkgzynnp", {
+      const response = await fetch("https://formspree.io/f/xkgvykza", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
