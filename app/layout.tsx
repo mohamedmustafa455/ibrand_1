@@ -274,12 +274,16 @@ export default function RootLayout({
             }),
           }}
         />
-        {/* Google Analytics Placeholder */}
+        {/* Google Tag Manager (Ads) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17824646238" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
               // Google Analytics will be added here
-              // gtag('config', 'GA_MEASUREMENT_ID');
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-17824646238');
             `,
           }}
         />
